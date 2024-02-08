@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import { uploadDocuments } from "../controllers/users.controller.js"
+import { upgradeToPremium } from '../controllers/users.controller.js';
 import passport from "passport";
 import { registerUser, loginUser, logoutUser, handleGitHubCallback, getUserPremiumStatus } from "../controllers/users.controller.js";
 import UserDTO from "../dao/DTOs/user.dto.js";
@@ -117,7 +118,11 @@ UserRouter.get("/current", async (req, res) => {
 const upload = multer({ dest: 'uploads/' });
 
 // Ruta para subir documentos
-router.post('/:uid/documents', upload.array('documents'), uploadDocuments);
+UserRouter.post('/:uid/documents', upload.array('documents'), uploadDocuments);
+
+// Ruta para actualizar a usuario premium
+UserRouter.put('/premium/:uid', upgradeToPremium);
+
 
 export default UserRouter;
 

@@ -1,4 +1,34 @@
 import User from '../models/user.model.js';
+import { profileUpload, productUpload, documentUpload } from '../config/multer.config.js';
+
+
+export async function upgradeToPremium(req, res) {
+    try {
+        const userId = req.params.uid;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        // Verificar si el usuario ha cargado todos los documentos requeridos
+        if (!user.hasUploadedDocuments()) {
+            return res.status(400).json({ error: 'El usuario no ha terminado de cargar la documentación requerida' });
+        }
+
+        // Actualizar el usuario a premium
+        user.role = 'premium';
+
+        // Guardar los cambios en la base de datos
+        await user.save();
+
+        // Responder con el usuario actualizado
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error al actualizar usuario a premium:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+}
 
 export async function registerUser(req, res) {
 
@@ -153,6 +183,39 @@ export async function uploadDocuments(req, res) {
         console.error('Error al subir documentos:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
+}
+
+// Función para subir foto de perfil
+export async function uploadProfilePhoto(req, res) {
+    profileUpload.single('profilePhoto')(req, res, async (err) => {
+        if (err) {
+            console.error('Error al subir foto de perfil:', err);
+            return res.status(500).json({ error: 'Error interno del servidor al subir foto de perfil' });
+        }
+        // Aquí puedes continuar con la lógica para manejar la foto de perfil subida
+    });
+}
+
+// Función para subir imagen de producto
+export async function uploadProductImage(req, res) {
+    productUpload.single('productImage')(req, res, async (err) => {
+        if (err) {
+            console.error('Error al subir imagen de producto:', err);
+            return res.status(500).json({ error: 'Error interno del servidor al subir imagen de producto' });
+        }
+        // Aquí puedes continuar con la lógica para manejar la imagen de producto subida
+    });
+}
+
+// Función para subir documento
+export async function uploadDocument(req, res) {
+    documentUpload.single('document')(req, res, async (err) => {
+        if (err) {
+            console.error('Error al subir documento:', err);
+            return res.status(500).json({ error: 'Error interno del servidor al subir documento' });
+        }
+        // Aquí puedes continuar con la lógica para manejar el documento subido
+    });
 }
 
 

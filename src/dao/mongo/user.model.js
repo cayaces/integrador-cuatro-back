@@ -29,5 +29,12 @@ const userSchema = new mongoose.Schema({
     last_connection: { type: Date, default: Date.now }
 })
 
+// Método para verificar si el usuario ha cargado todos los documentos requeridos
+userSchema.methods.hasUploadedDocuments = function() {
+    // Lógica para verificar si el usuario ha cargado todos los documentos
+    // Devuelve true si ha cargado todos los documentos, de lo contrario, false
+    return this.documents.length === 3; // Suponiendo que documents es un array que contiene los documentos cargados
+};
+
 const userModel = mongoose.model(userCollection, userSchema);
 export default userModel;

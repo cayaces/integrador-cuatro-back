@@ -1,5 +1,6 @@
 import express from "express";
 import authorizeRole from "../config/auth.mongo.config.js";
+import { uploadProfilePhoto, uploadProductImage, uploadDocument } from '../controllers/users.controller.js';
 
 const ViewsRouter = express.Router()
 
@@ -26,5 +27,12 @@ ViewsRouter.get("/addProducts", authorizeRole("admin"), (req, res) => {
         title: "Agregar Productos"
     })
 })
+
+ViewsRouter.post('/upload/profile-photo', uploadProfilePhoto);
+
+ViewsRouter.post('/upload/product-image', uploadProductImage);
+
+ViewsRouter.post('/upload/document', uploadDocument);
+
 
 export default ViewsRouter
